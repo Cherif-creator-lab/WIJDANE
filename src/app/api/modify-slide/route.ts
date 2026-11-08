@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAnthropicClient, getDefaultModel } from "@/lib/anthropic";
+import { createClaudeMessageWithFallback } from "@/lib/anthropic";
 import { Slide } from "@/types/presentation";
 
 export const maxDuration = 45;
@@ -12,26 +12,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Slide et instructions requises." }, { status: 400 });
     }
 
-    const anthropic = getAnthropicClient();
-    const model = getDefaultModel();
-
-    const prompt = `Tu es un assistant expert en présentations académiques pour soutenance.
-Contexte du projet : "${topic || "Soutenance de fin d'études"}"
+    const prompt = `Tu es un architecte de présentation de niveau exécutif (Master's Thesis Defense).
+Contexte : "${topic || "Integrated Supply-Chain Coordination Framework"}"
 
 Voici la diapositive actuelle à modifier :
 ${JSON.stringify(slide, null, 2)}
 
-Instructions de modification demandées par l'utilisateur :
+Instructions de modification :
 "${instructions}"
 
-Modifie la diapositive en respectant ces instructions tout en conservant le format JSON strict de l'objet Slide.
-Maintiens ou ajuste "title", "subtitle", "bulletPoints", "secondaryColumn", "speaker" ("Wijdane", "Salma" ou "Wijdane & Salma") et "speakerNotes".
+Modifie la diapositive en respectant ces instructions tout en conservant le format JSON strict de l'objet Slide (avec cards, metrics, table, bulletPoints, bottomCallout, speakerNotes, etc.).
+Réponds UNIQUEMENT par l'objet JSON modifié de la slide, sans markdown.`;
 
-Réponds UNIQUEMENT par l'objet JSON modifié de la slide, sans markdown, sans texte additionnel.`;
-
-    const response = await anthropic.messages.create({
-      model,
-      max_tokens: 2048,
+    const { response } = await createClaudeMessageWithFallback({
+      max_tokens: 3000,
       messages: [{ role: "user", content: prompt }],
     });
 
