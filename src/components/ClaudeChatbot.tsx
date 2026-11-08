@@ -17,6 +17,11 @@ import {
 interface ClaudeChatbotProps {
   currentSlide: Slide;
   presentation: PresentationData;
+  onApplyChatbotAction?: (action: {
+    updatedSlide?: Slide;
+    newSlide?: Slide;
+    theme?: PresentationData["theme"];
+  }) => void;
   onUpdateCurrentSlide: (updated: Slide) => void;
   onAddNewSlide: (newSlide: Slide) => void;
   onThemeChange: (theme: PresentationData["theme"]) => void;
@@ -25,6 +30,7 @@ interface ClaudeChatbotProps {
 export function ClaudeChatbot({
   currentSlide,
   presentation,
+  onApplyChatbotAction,
   onUpdateCurrentSlide,
   onAddNewSlide,
   onThemeChange,
@@ -91,22 +97,46 @@ export function ClaudeChatbot({
 
       const updatedSlideNumbers: number[] = [];
 
-      if (data.updatedCurrentSlide && data.updatedCurrentSlide.title) {
-        onUpdateCurrentSlide({
+      let updatedSlidePayload: Slide | undefined;
+      let newSlidePayload: Slide | undefined;
+      let themePayload: PresentationData["theme"] | undefined;
+
+      if (
+        data.updatedCurrentSlide &&
+        (data.updatedCurrentSlide.title ||
+          data.updatedCurrentSlide.subtitle ||
+          data.updatedCurrentSlide.cards ||
+          data.updatedCurrentSlide.bulletPoints ||
+          data.updatedCurrentSlide.bottomCallout ||
+          data.updatedCurrentSlide.speakerNotes)
+      ) {
+        updatedSlidePayload = {
           ...currentSlide,
           ...data.updatedCurrentSlide,
           id: currentSlide.id,
           slideNumber: currentSlide.slideNumber,
-        });
+        };
         updatedSlideNumbers.push(currentSlide.slideNumber);
       }
 
       if (data.newSlide && data.newSlide.title) {
-        onAddNewSlide(data.newSlide);
+        newSlidePayload = data.newSlide;
       }
 
       if (data.themeChange) {
-        onThemeChange(data.themeChange);
+        themePayload = data.themeChange;
+      }
+
+      if (onApplyChatbotAction) {
+        onApplyChatbotAction({
+          updatedSlide: updatedSlidePayload,
+          newSlide: newSlidePayload,
+          theme: themePayload,
+        });
+      } else {
+        if (updatedSlidePayload) onUpdateCurrentSlide(updatedSlidePayload);
+        if (newSlidePayload) onAddNewSlide(newSlidePayload);
+        if (themePayload) onThemeChange(themePayload);
       }
 
       const botMsg: ChatMessage = {

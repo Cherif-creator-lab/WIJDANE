@@ -85,6 +85,30 @@ export function SlidePreview({
   const theme =
     THEME_STYLES[presentation.theme] || THEME_STYLES["luxury-gold"];
 
+  const effectiveCards =
+    slide.cards && slide.cards.length > 0
+      ? slide.cards
+      : slide.bulletPoints &&
+        slide.bulletPoints.length > 0 &&
+        (slide.layout === "cards" || slide.layout === "flow")
+      ? slide.bulletPoints.map((bp, i) => {
+          const parts = bp.replace(/^•\s*/, "").split(":");
+          return {
+            badge: `0${i + 1}`,
+            title: parts[0]?.trim() || `Point ${i + 1}`,
+            description: parts.slice(1).join(":").trim() || parts[0]?.trim(),
+            items: [],
+          };
+        })
+      : [];
+
+  const getGridCols = (count: number) => {
+    if (count === 1) return "grid-cols-1 max-w-xl mx-auto";
+    if (count === 2) return "grid-cols-1 sm:grid-cols-2";
+    if (count === 4) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+    return "grid-cols-1 sm:grid-cols-3";
+  };
+
   return (
     <div className="w-full flex flex-col items-center">
       {/* TRUE 16:9 POWERPOINT SLIDE FRAME */}
@@ -282,16 +306,14 @@ export function SlidePreview({
 
               {/* 3. CARDS OR FLOW LAYOUT */}
               {(slide.layout === "cards" || slide.layout === "flow") &&
-                slide.cards && (
+                effectiveCards.length > 0 && (
                   <div className="space-y-2.5">
                     <div
-                      className={`grid gap-2.5 ${
-                        slide.cards.length === 4
-                          ? "grid-cols-2"
-                          : "grid-cols-3"
-                      }`}
+                      className={`grid gap-2.5 ${getGridCols(
+                        effectiveCards.length
+                      )}`}
                     >
-                      {slide.cards.map((c, idx) => (
+                      {effectiveCards.map((c, idx) => (
                         <div
                           key={idx}
                           className={`bg-white rounded-xl p-3 border shadow-sm transition-all flex flex-col justify-between ${theme.cardBorder}`}

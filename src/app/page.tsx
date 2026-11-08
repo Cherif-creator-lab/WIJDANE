@@ -91,10 +91,48 @@ export default function HomePage() {
   const currentSlide =
     presentation.slides[currentSlideIndex] || presentation.slides[0];
 
+  const handleApplyChatbotAction = ({
+    updatedSlide,
+    newSlide,
+    theme,
+  }: {
+    updatedSlide?: Slide;
+    newSlide?: Slide;
+    theme?: PresentationData["theme"];
+  }) => {
+    setPresentation((prev) => {
+      let nextSlides = [...prev.slides];
+      if (updatedSlide) {
+        nextSlides = nextSlides.map((s, idx) =>
+          idx === currentSlideIndex || s.slideNumber === updatedSlide.slideNumber
+            ? { ...s, ...updatedSlide }
+            : s
+        );
+      }
+      if (newSlide) {
+        nextSlides = [
+          ...nextSlides,
+          { ...newSlide, slideNumber: nextSlides.length + 1 },
+        ];
+      }
+      return {
+        ...prev,
+        theme: theme || prev.theme,
+        slides: nextSlides,
+      };
+    });
+
+    if (newSlide) {
+      setCurrentSlideIndex(presentation.slides.length);
+    }
+  };
+
   const handleUpdateCurrentSlide = (updated: Slide) => {
-    const updatedSlides = [...presentation.slides];
-    updatedSlides[currentSlideIndex] = updated;
-    setPresentation({ ...presentation, slides: updatedSlides });
+    setPresentation((prev) => {
+      const nextSlides = [...prev.slides];
+      nextSlides[currentSlideIndex] = updated;
+      return { ...prev, slides: nextSlides };
+    });
   };
 
   const handleAddSlide = (customSlide?: Slide) => {
@@ -538,10 +576,11 @@ export default function HomePage() {
             <ClaudeChatbot
               currentSlide={currentSlide}
               presentation={presentation}
+              onApplyChatbotAction={handleApplyChatbotAction}
               onUpdateCurrentSlide={handleUpdateCurrentSlide}
               onAddNewSlide={(newSlide) => handleAddSlide(newSlide)}
               onThemeChange={(theme) =>
-                setPresentation({ ...presentation, theme })
+                setPresentation((prev) => ({ ...prev, theme }))
               }
             />
           </aside>

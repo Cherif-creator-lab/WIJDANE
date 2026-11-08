@@ -7,12 +7,36 @@ import { PresentationData, Slide } from "@/types/presentation";
 export const maxDuration = 45;
 
 function escapeXml(str: string = ""): string {
+  if (!str) return "";
   return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function replaceInXml(xml: string, oldText: string, newText: string): string {
+  if (!oldText || !newText || oldText === newText) return xml;
+  const escapedOld = escapeXml(oldText);
+  const escapedNew = escapeXml(newText);
+  if (xml.includes(escapedOld)) {
+    return xml.replace(new RegExp(escapeRegExp(escapedOld), "g"), escapedNew);
+  }
+  // Handle text split after prefixes like "Research context: "
+  const strippedOld = oldText.replace(/^[A-Za-z\s]+:\s*/, "").trim();
+  const escapedStripped = escapeXml(strippedOld);
+  if (strippedOld && strippedOld !== oldText && xml.includes(escapedStripped)) {
+    return xml.replace(new RegExp(escapeRegExp(escapedStripped), "g"), escapedNew);
+  }
+  if (xml.includes(oldText)) {
+    return xml.replace(new RegExp(escapeRegExp(oldText), "g"), escapedNew);
+  }
+  return xml;
 }
 
 export async function POST(req: Request) {
@@ -29,12 +53,25 @@ export async function POST(req: Request) {
       throw new Error("Template master introuvable sur le serveur.");
     }
 
+    // Lire également les slides riches de base pour comparaison
+    let baselineSlides: Slide[] = [];
+    const richPath = path.join(process.cwd(), "public", "template", "rich_22_slides.json");
+    if (fs.existsSync(richPath)) {
+      try {
+        baselineSlides = JSON.parse(fs.readFileSync(richPath, "utf8"));
+      } catch {
+        baselineSlides = [];
+      }
+    }
+
     const templateBuf = fs.readFileSync(templatePath);
     const zip = await JSZip.loadAsync(templateBuf);
 
-    // 2. Mettre à jour chaque slide et ses notes d'orateur
-    for (let i = 1; i <= 22; i++) {
+    // 2. Mettre à jour chaque slide et ses notes d'orateur (jusqu'à 22 slides)
+    const maxSlides = Math.min(22, presentation.slides.length);
+    for (let i = 1; i <= maxSlides; i++) {
       const slide = presentation.slides[i - 1];
+      const baseline = baselineSlides[i - 1];
       if (!slide) continue;
 
       const slideXmlPath = `ppt/slides/slide${i}.xml`;
@@ -42,13 +79,11 @@ export async function POST(req: Request) {
 
       // A. Mettre à jour les notes d'orateur dans notesSlide{i}.xml
       const notesFile = zip.file(notesXmlPath);
-      if (notesFile) {
+      if (notesFile && slide.speakerNotes) {
         let notesXml = await notesFile.async("string");
-        const cleanNotes = escapeXml(slide.speakerNotes || "");
-        
-        // Remplacement propre du corps de texte de la note
+        const cleanNotes = escapeXml(slide.speakerNotes);
+
         if (/<a:t>[\s\S]*?<\/a:t>/.test(notesXml)) {
-          // Remplace le premier texte (qui est la note orateur, pas le numéro de page)
           notesXml = notesXml.replace(
             /(<p:ph type="body" idx="1"\/>[\s\S]*?<a:t>)([\s\S]*?)(<\/a:t>)/,
             `$1${cleanNotes}$3`
@@ -63,26 +98,66 @@ export async function POST(req: Request) {
         let slideXml = await slideFile.async("string");
 
         // Remplacement du titre si modifié
-        if (slide.title) {
-          const escapedTitle = escapeXml(slide.title);
-          // Si le titre de la slide a été édité via le chatbot, le substituer
-          if (slide.title !== DEFAULT_TITLES[i]) {
-            slideXml = slideXml.replace(
-              new RegExp(escapeRegExp(DEFAULT_TITLES[i] || ""), "g"),
-              escapedTitle
-            );
-          }
+        if (slide.title && baseline?.title && slide.title !== baseline.title) {
+          slideXml = replaceInXml(slideXml, baseline.title, slide.title);
         }
 
-        // Remplacement du message clé / callout si modifié
-        if (slide.bottomCallout) {
-          const escapedCallout = escapeXml(slide.bottomCallout);
-          if (DEFAULT_CALLOUTS[i] && slide.bottomCallout !== DEFAULT_CALLOUTS[i]) {
-            slideXml = slideXml.replace(
-              new RegExp(escapeRegExp(DEFAULT_CALLOUTS[i]), "g"),
-              escapedCallout
-            );
-          }
+        // Remplacement du sous-titre si modifié
+        if (slide.subtitle && baseline?.subtitle && slide.subtitle !== baseline.subtitle) {
+          slideXml = replaceInXml(slideXml, baseline.subtitle, slide.subtitle);
+        }
+
+        // Remplacement du callout si modifié
+        if (slide.bottomCallout && baseline?.bottomCallout && slide.bottomCallout !== baseline.bottomCallout) {
+          slideXml = replaceInXml(slideXml, baseline.bottomCallout, slide.bottomCallout);
+        }
+
+        // Remplacement des cartes
+        if (slide.cards && baseline?.cards) {
+          slide.cards.forEach((card, cIdx) => {
+            const baseCard = baseline.cards?.[cIdx];
+            if (baseCard) {
+              if (card.title && baseCard.title && card.title !== baseCard.title) {
+                slideXml = replaceInXml(slideXml, baseCard.title, card.title);
+              }
+              if (card.description && baseCard.description && card.description !== baseCard.description) {
+                slideXml = replaceInXml(slideXml, baseCard.description, card.description);
+              }
+              if (card.items && baseCard.items) {
+                card.items.forEach((item, itIdx) => {
+                  const baseItem = baseCard.items?.[itIdx];
+                  if (baseItem && item !== baseItem) {
+                    slideXml = replaceInXml(slideXml, baseItem, item);
+                  }
+                });
+              }
+            }
+          });
+        }
+
+        // Remplacement des bullet points
+        if (slide.bulletPoints && baseline?.bulletPoints) {
+          slide.bulletPoints.forEach((bp, bIdx) => {
+            const baseBp = baseline.bulletPoints?.[bIdx];
+            if (baseBp && bp !== baseBp) {
+              slideXml = replaceInXml(slideXml, baseBp, bp);
+            }
+          });
+        }
+
+        // Remplacement des métriques
+        if (slide.metrics && baseline?.metrics) {
+          slide.metrics.forEach((m, mIdx) => {
+            const baseM = baseline.metrics?.[mIdx];
+            if (baseM) {
+              if (m.value && baseM.value && m.value !== baseM.value) {
+                slideXml = replaceInXml(slideXml, baseM.value, m.value);
+              }
+              if (m.label && baseM.label && m.label !== baseM.label) {
+                slideXml = replaceInXml(slideXml, baseM.label, m.label);
+              }
+            }
+          });
         }
 
         zip.file(slideXmlPath, slideXml);
@@ -133,56 +208,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
-function escapeRegExp(string: string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-const DEFAULT_TITLES: Record<number, string> = {
-  1: "Integrated Supply-Chain Coordination Framework",
-  2: "We entered the supply chain from the inside: Procurement and Planning, side by side",
-  3: "From pre-series to mass production: the window to fix coordination before volumes rise",
-  4: "EDI transmits the customer’s changes — but who acts on them?",
-  5: "The first warning signs: the same demand change, felt differently across functions",
-  6: "The gap: information arrives, but coordinated action does not follow automatically",
-  7: "Problem statement and research questions",
-  8: "From observation to a structured research project",
-  9: "Constructivism, mixed methods and an action-research logic",
-  10: "Two evidence streams: ten voices and the company’s own records",
-  11: "What the professionals revealed: five recurring themes",
-  12: "Measuring the problem: demand moves almost every week",
-  13: "What the combined evidence confirmed",
-  14: "Why the gap matters: increases and decreases hurt differently",
-  15: "Three lenses on the same problem",
-  16: "From theory to the K&S case",
-  17: "Why we built the ISCC Model",
-  18: "The ISCC Model: from EDI information to coordinated decisions",
-  19: "How the ISCC Model can prepare the move to mass production",
-  20: "Recommendations and implementation priorities",
-  21: "Limitations and conclusion",
-  22: "Thank you for your attention",
-};
-
-const DEFAULT_CALLOUTS: Record<number, string> = {
-  2: "pre-series production at K3, with the transition to mass production expected about two weeks after the study window — a real industrial situation, not an abstract assumption.",
-  3: "Pre-series is the opportunity to identify and correct coordination weaknesses before volumes increase",
-  4: "EDI transmits customer information — but receiving it does not automatically guarantee coordinated operational action",
-  5: "We saw it first; Act II tests whether it was systematic",
-  6: "A coordination gap, not a knowledge gap: the steps are known, but no owner, timeline or shared procedure exists",
-  7: "Risk: shortages, backlog, excess stock and obsolescence, sharpest in the move to mass production.",
-  8: "Academic: a context-specific coordination framework for pre-series to mass production.  Practical: a structured model for cross-functional decisions at K&S",
-  9: "comparing sources to strengthen credibility",
-  10: "Qualitative + quantitative evidence  →  TRIANGULATION  →  a fuller understanding of the coordination problem",
-  11: "“improvised each time” (Procurement)",
-  12: "CW35 (9,723.3%) is a calculation artifact (86 LAB vs 8,362 VSAT units) and is excluded.",
-  13: "Type 2/3 orders delay information",
-  14: "The response is cross-functional: Planning · Procurement · Industrial Engineering · Material Flow · Quality",
-  15: "Context: ramp-up and pre-series logistics require coordinated capacity, materials and information flows before series production",
-  16: "Theory interprets the real problem; it does not replace the evidence",
-  17: "ISCC",
-  18: "Builds on existing mechanisms; not yet implemented or validated.",
-  19: "Readiness for series volumes",
-  20: "Priority = relevance to the findings and feasibility: formalize existing mechanisms first",
-  21: "Coordination must be structured before mass production",
-  22: "Questions and discussion",
-};
