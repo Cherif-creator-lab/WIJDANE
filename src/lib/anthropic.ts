@@ -22,7 +22,7 @@ export function getDefaultModel() {
 
 export async function createClaudeMessageWithFallback(params: {
   system?: string;
-  messages: { role: "user" | "assistant"; content: string }[];
+  messages: Anthropic.MessageParam[] | any[];
   max_tokens?: number;
   preferredModel?: string;
 }) {

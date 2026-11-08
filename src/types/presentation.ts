@@ -58,6 +58,14 @@ export interface PresentationData {
   slides: Slide[];
 }
 
+export interface ChatAttachment {
+  name: string;
+  size: number;
+  type: string;
+  base64?: string;
+  summary?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
@@ -65,4 +73,5 @@ export interface ChatMessage {
   timestamp: string;
   modelUsed?: string;
   updatedSlideNumbers?: number[];
+  attachment?: ChatAttachment;
 }

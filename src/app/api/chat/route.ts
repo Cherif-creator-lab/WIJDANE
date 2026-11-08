@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClaudeMessageWithFallback } from "@/lib/anthropic";
+import { parseUploadedFile } from "@/lib/file-parser";
 import { Slide } from "@/types/presentation";
 
 export const maxDuration = 60;
@@ -8,19 +9,56 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const {
-      message,
+      message = "",
       currentSlide,
       allSlidesSummary,
       preferredModel,
+      fileAttachment,
     }: {
-      message: string;
+      message?: string;
       currentSlide: Slide;
       allSlidesSummary: { slideNumber: number; act?: string; title: string; layout: string }[];
       preferredModel?: string;
+      fileAttachment?: {
+        name: string;
+        type: string;
+        size: number;
+        base64: string;
+      };
     } = body;
 
-    if (!message || !message.trim()) {
-      return NextResponse.json({ error: "Message vide." }, { status: 400 });
+    const trimmedMsg = (message || "").trim();
+    if (!trimmedMsg && !fileAttachment) {
+      return NextResponse.json(
+        { error: "Veuillez saisir un message ou joindre un fichier." },
+        { status: 400 }
+      );
+    }
+
+    // 1. Parser le fichier joint si présent
+    let parsedFileSummary = "";
+    let fileExtractedText = "";
+    let isImageFile = false;
+    let imageMediaType = "image/png";
+
+    if (fileAttachment && fileAttachment.base64) {
+      try {
+        const fileBuf = Buffer.from(fileAttachment.base64, "base64");
+        const parsed = await parseUploadedFile(
+          fileAttachment.name,
+          fileAttachment.type || "application/octet-stream",
+          fileBuf
+        );
+        parsedFileSummary = parsed.summary;
+        fileExtractedText = parsed.text;
+        isImageFile = parsed.isImage;
+        if (parsed.mediaType) {
+          imageMediaType = parsed.mediaType;
+        }
+      } catch (parseErr: any) {
+        console.warn("Erreur analyse fichier joint:", parseErr.message);
+        parsedFileSummary = `Fichier ${fileAttachment.name} (analyse partielle)`;
+      }
     }
 
     const systemPrompt = `Tu es l'Architecte IA d'Élite du site "Wijdane LAAGUIDI Hakma La Zone", propulsé par Claude Opus.
@@ -28,20 +66,20 @@ Tu es le copilote direct de Wijdane Laaguidi et Salma Lsilis pour leur soutenanc
 "Integrated Supply-Chain Coordination Framework: Synchronizing Production Planning, Procurement and Capacity Management under EDI Demand Variability" (Mercedes-Benz VAN Program · Kromberg & Schubert, Kenitra Plant K3 — Ibn Tofail University).
 
 CONTEXTE FONDAMENTAL DU SITE ET DU DOCUMENT :
-1. LE SUJET ET LE DOCUMENT PDF SONT DÉJÀ 100% PRÉSENTS ET CHARGÉS !
-   Ne dis JAMAIS que tu n'as pas le document ou le PDF.
-   Quand l'utilisateur écrit "bghit ppt be had promt ou had pdf", "had l-prompt", "ce pdf", "more creative in the design", etc. :
-   IL PARLE DU PROJET DE THÈSE ET DE LA SLIDE EN COURS DÉJÀ AFFICHÉE !
-2. NE DEMANDE JAMAIS À L'UTILISATEUR D'UPLOADER OU DE FOURNIR UN FICHIER !
-   Agis immédiatement sur la diapositive en cours pour appliquer les améliorations créatives demandées.
+1. LE SUJET ET LE CONTENU OFFICIEL SONT DÉJÀ CHARGÉS DANS LE SYSTÈME !
+   Ne dis JAMAIS que tu n'as pas accès à la soutenance.
+2. ANALYSE DE FICHIER ATTACHÉ (PDF, PPTX, DOCX, TXT, IMAGE) :
+   Si l'utilisateur joint un fichier, examine scrupuleusement son contenu extrait ou son image.
+   Extrais-en les informations clés, données chiffrées, problématiques ou solutions pour enrichir immédiatement la diapositive en cours ou concevoir une nouvelle diapositive !
+   Dans ton texte 'reply', mentionne explicitement le nom du fichier et les éléments clés que tu en as tirés.
 
 COMPRÉHENSION MULTILINGUE TOTALE :
 Tu comprends parfaitement le Français, l'Anglais et la Darija marocaine / Arabe (ex : "bghit ppt be had promt", "dir lya", "bdel l-design", "zid", "khelliha", etc.).
 
 RÈGLE D'OR D'ACTION VISUELLE :
-Quand l'utilisateur demande une modification, un nouveau design, plus de créativité ("be more creative in the design", "change le style", "améliore", "traduis", etc.) :
+Quand l'utilisateur demande une modification, un nouveau design, plus de créativité ou intègre un fichier :
 TU NE DOIS PAS RÉPONDRE AVEC UNE PHRASE VIDE !
-TU DOIS OBLIGATOIREMENT REMPLIR L'OBJET "updatedCurrentSlide" avec un design spectaculaire, percutant et complet. Il est INTERDIT de renvoyer "updatedCurrentSlide": null quand on te demande de changer ou sublimer le design !
+TU DOIS OBLIGATOIREMENT REMPLIR L'OBJET "updatedCurrentSlide" avec un design spectaculaire, percutant et complet. Il est INTERDIT de renvoyer "updatedCurrentSlide": null quand on te demande de changer ou sublimer le design ou analyser un document !
 
 RÈGLES D'ARCHITECTURE DESIGN :
 1. Pour être créatif dans le design d'une slide :
@@ -61,7 +99,7 @@ ${JSON.stringify(allSlidesSummary, null, 2)}
 FORMAT DE SORTIE JSON STRICT ET OBLIGATOIRE :
 Réponds UNIQUEMENT avec un JSON valide, sans balises markdown, sans texte avant ou après :
 {
-  "reply": "Explication chaleureuse, motivante et précise en français ou anglais de ce que tu viens de modifier et des choix de design faits.",
+  "reply": "Explication chaleureuse, motivante et précise en français ou anglais de ce que tu viens de modifier et des éléments clés tirés du fichier/instruction.",
   "updatedCurrentSlide": {
     "id": "${currentSlide?.id || "slide-1"}",
     "slideNumber": ${currentSlide?.slideNumber || 1},
@@ -94,16 +132,52 @@ Réponds UNIQUEMENT avec un JSON valide, sans balises markdown, sans texte avant
   "themeChange": null ou "luxury-gold" | "mercedes-midnight" | "architect-obsidian" | "emerald-executive"
 }`;
 
+    // Construire le message utilisateur
+    let userPromptText = trimmedMsg || "Analyse ce fichier et applique les modifications de manière créative sur la diapositive.";
+    if (fileExtractedText) {
+      userPromptText = `[FICHIER JOINT TRANSMIS PAR L'UTILISATEUR]
+Nom du fichier : ${fileAttachment?.name}
+Type et taille : ${parsedFileSummary}
+
+--- DÉBUT CONTENU EXTRAIT DU FICHIER ---
+${fileExtractedText.slice(0, 45000)}
+--- FIN CONTENU DU FICHIER ---
+
+INSTRUCTIONS OU DEMANDE DE L'UTILISATEUR :
+${userPromptText}`;
+    }
+
+    let userMessageParam: any;
+    if (isImageFile && fileAttachment?.base64) {
+      userMessageParam = {
+        role: "user",
+        content: [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: imageMediaType,
+              data: fileAttachment.base64,
+            },
+          },
+          {
+            type: "text",
+            text: userPromptText,
+          },
+        ],
+      };
+    } else {
+      userMessageParam = {
+        role: "user",
+        content: userPromptText,
+      };
+    }
+
     const { response, usedModel } = await createClaudeMessageWithFallback({
       system: systemPrompt,
       preferredModel: preferredModel || process.env.ANTHROPIC_MODEL || "claude-opus-4.8",
       max_tokens: 4096,
-      messages: [
-        {
-          role: "user",
-          content: message,
-        },
-      ],
+      messages: [userMessageParam],
     });
 
     const firstBlock = response.content[0];

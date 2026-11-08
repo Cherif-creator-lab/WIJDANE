@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Slide, PresentationData, ChatMessage, Speaker } from "@/types/presentation";
+import {
+  Slide,
+  PresentationData,
+  ChatMessage,
+  Speaker,
+  ChatAttachment,
+} from "@/types/presentation";
 import {
   Sparkles,
   Send,
@@ -12,6 +18,10 @@ import {
   MessageSquare,
   CheckCircle2,
   Cpu,
+  Paperclip,
+  FileText,
+  X,
+  FileSpreadsheet,
 } from "lucide-react";
 
 interface ClaudeChatbotProps {
@@ -39,12 +49,15 @@ export function ClaudeChatbot({
   const [preferredModel, setPreferredModel] = useState<string>("claude-opus-4.8");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<ChatAttachment | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
       content:
-        "Bienvenue sur **Wijdane LAAGUIDI — Hakma La Zone** ✨\n\nJe suis votre Architecte IA **Claude Opus** connecté à votre clé `.env`.\nLes **21 slides officielles** de votre soutenance (*Mercedes-Benz VAN Program · K&S Plant K3*) sont chargées.\n\nDemandez-moi de modifier la slide affichée, traduire, enrichir vos notes d'oral ou préparer les réponses au jury !",
+        "Bienvenue sur **Wijdane LAAGUIDI — Hakma La Zone** ✨\n\nJe suis votre Architecte IA **Claude Opus** connecté à votre clé `.env`.\nLes **21 slides officielles** de votre soutenance (*Mercedes-Benz VAN Program · K&S Plant K3*) sont chargées.\n\nDemandez-moi de modifier la slide affichée, traduire, ou **cliquez sur le trombone 📎 pour m'envoyer un fichier (PDF, PPTX, Word, Image)** à analyser et intégrer !",
       timestamp: "Prêt",
       modelUsed: "claude-opus-4.8",
     },
@@ -56,19 +69,58 @@ export function ClaudeChatbot({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 25 * 1024 * 1024) {
+      alert("Le fichier est trop volumineux (maximum 25 Mo).");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.includes(",") ? result.split(",")[1] : result;
+      setAttachedFile({
+        name: file.name,
+        type: file.type || "application/octet-stream",
+        size: file.size,
+        base64,
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   const handleSendMessage = async (customText?: string) => {
     const textToSend = (customText ?? input).trim();
-    if (!textToSend || isLoading) return;
+    if ((!textToSend && !attachedFile) || isLoading) return;
+
+    const fileToSend = attachedFile;
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
-      content: textToSend,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      content:
+        textToSend ||
+        `Analyse ce fichier joint et intègre son contenu dans la présentation : ${fileToSend?.name}`,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      attachment: fileToSend
+        ? {
+            name: fileToSend.name,
+            size: fileToSend.size,
+            type: fileToSend.type,
+          }
+        : undefined,
     };
 
     setMessages((prev) => [...prev, userMsg]);
     if (!customText) setInput("");
+    setAttachedFile(null);
     setIsLoading(true);
 
     try {
@@ -87,6 +139,14 @@ export function ClaudeChatbot({
           currentSlide,
           allSlidesSummary,
           preferredModel,
+          fileAttachment: fileToSend
+            ? {
+                name: fileToSend.name,
+                type: fileToSend.type,
+                size: fileToSend.size,
+                base64: fileToSend.base64,
+              }
+            : undefined,
         }),
       });
 
@@ -275,6 +335,16 @@ export function ClaudeChatbot({
                       : "bg-slate-900 border border-white/10 text-slate-200 rounded-bl-none shadow-md"
                   }`}
                 >
+                  {m.attachment && (
+                    <div className="mb-2 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/25 border border-black/15 text-[11px] text-slate-950 font-bold max-w-full">
+                      <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{m.attachment.name}</span>
+                      <span className="text-[9px] opacity-75 shrink-0">
+                        ({Math.round(m.attachment.size / 1024)} KB)
+                      </span>
+                    </div>
+                  )}
+
                   {m.content}
 
                   {m.updatedSlideNumbers && m.updatedSlideNumbers.length > 0 && (
@@ -290,7 +360,7 @@ export function ClaudeChatbot({
             {isLoading && (
               <div className="flex items-center gap-2 text-xs text-amber-400 bg-slate-900/80 border border-amber-500/20 rounded-xl p-3">
                 <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                <span>Claude Opus analyse et modifie votre présentation...</span>
+                <span>Claude Opus analyse votre fichier et applique les modifications...</span>
               </div>
             )}
             <div ref={chatEndRef} />
@@ -315,20 +385,63 @@ export function ClaudeChatbot({
 
           {/* Input Box */}
           <div className="p-3 border-t border-white/10 bg-[#070A12]">
+            {/* Attached file preview chip */}
+            {attachedFile && (
+              <div className="flex items-center justify-between gap-2 px-3 py-1.5 mb-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] animate-fadeIn">
+                <div className="flex items-center gap-2 truncate">
+                  <FileText className="w-4 h-4 shrink-0 text-amber-400" />
+                  <span className="truncate font-semibold">{attachedFile.name}</span>
+                  <span className="text-[10px] text-amber-400/70 shrink-0">
+                    ({Math.round(attachedFile.size / 1024)} KB)
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAttachedFile(null)}
+                  className="text-slate-400 hover:text-white p-0.5 rounded transition"
+                  title="Supprimer ce fichier"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className="hidden"
+              accept=".pdf,.pptx,.docx,.txt,.csv,.json,.png,.jpg,.jpeg,.webp"
+            />
+
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+                title="Joindre un fichier (PDF, PPTX, Word, Image, Document...)"
+                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 hover:text-amber-400 text-slate-300 border border-white/10 transition disabled:opacity-40 shrink-0 flex items-center justify-center shadow-sm"
+              >
+                <Paperclip className="w-4 h-4" />
+              </button>
+
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder={`Demander à Claude de modifier la Slide #${currentSlide.slideNumber}...`}
+                placeholder={
+                  attachedFile
+                    ? `Instruction pour ${attachedFile.name}...`
+                    : `Demander à Claude ou joindre un fichier (PDF, PPTX)...`
+                }
                 className="flex-1 bg-slate-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
               />
               <button
                 type="button"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || (!input.trim() && !attachedFile)}
                 onClick={() => handleSendMessage()}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold disabled:opacity-40 transition shadow-lg shadow-amber-500/20"
+                className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold disabled:opacity-40 transition shadow-lg shadow-amber-500/20 shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>
