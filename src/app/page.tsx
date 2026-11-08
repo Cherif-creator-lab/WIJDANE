@@ -24,7 +24,6 @@ import {
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
-  FileText,
 } from "lucide-react";
 
 const STORAGE_KEY = "wijdane_hakma_la_zone_ppt_v1";
@@ -216,10 +215,6 @@ export default function HomePage() {
     }
   };
 
-  const handleExportPdf = () => {
-    window.print();
-  };
-
   // Act jump shortcuts
   const actShortcuts = [
     { label: "Cover", slideIdx: 0 },
@@ -336,24 +331,11 @@ export default function HomePage() {
             )}
           </button>
 
-          {/* Export PDF button (16:9 Pixel-Perfect) */}
-          <button
-            type="button"
-            onClick={handleExportPdf}
-            title="Exporter la présentation complète au format PDF (16:9 haute résolution identique au site)"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 border border-amber-500/30 text-xs font-bold shadow-md transition"
-          >
-            <FileText className="w-4 h-4 text-amber-400" />
-            <span className="hidden sm:inline">Export .PDF</span>
-            <span className="sm:hidden">PDF</span>
-          </button>
-
           {/* Export PPTX button */}
           <button
             type="button"
             disabled={isExporting}
             onClick={handleExport}
-            title="Exporter la présentation complète au format PowerPoint (.pptx)"
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 transition disabled:opacity-50"
           >
             {isExporting ? (
@@ -361,14 +343,13 @@ export default function HomePage() {
             ) : (
               <Download className="w-4 h-4" />
             )}
-            <span className="hidden sm:inline">Export .PPTX</span>
-            <span className="sm:hidden">PPTX</span>
+            <span>Export .PPTX</span>
           </button>
         </div>
       </header>
 
       {/* ================= MAIN ARCHITECT WORKSPACE ================= */}
-      <div id="main-studio-workspace" className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
         {/* LEFT PANE: Collapsible Storyboard (Mini-Rail when folded, Full List when expanded) */}
         {!isFullscreen && (
           <aside
@@ -604,20 +585,6 @@ export default function HomePage() {
             />
           </aside>
         )}
-      </div>
-
-      {/* ================= PRINT / PDF EXPORT CONTAINER (ALL 21+ SLIDES 16:9 IDENTIQUE AU SITE) ================= */}
-      <div id="print-slides-deck" className="hidden print:block">
-        {presentation.slides.map((s, idx) => (
-          <div key={s.id || idx} className="print-slide-page">
-            <SlidePreview
-              slide={s}
-              presentation={presentation}
-              currentIndex={idx}
-              totalSlides={presentation.slides.length}
-            />
-          </div>
-        ))}
       </div>
     </div>
   );
