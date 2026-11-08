@@ -26,7 +26,7 @@ import {
   PanelRightOpen,
 } from "lucide-react";
 
-const STORAGE_KEY = "wijdane_hakma_la_zone_ppt_v1";
+const STORAGE_KEY = "wijdane_hakma_la_zone_ppt_v2";
 
 export default function HomePage() {
   const [presentation, setPresentation] = useState<PresentationData>(
