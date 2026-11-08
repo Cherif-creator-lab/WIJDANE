@@ -4,12 +4,15 @@ export function getAnthropicClient() {
   const apiKey =
     process.env.ANTHROPIC_API_KEY ||
     "sk-XprZK2vvDS4ZENowET9I5SLl7Tlu4fYEkD9kVWaPsPn9EbvK";
-  const baseURL =
-    process.env.ANTHROPIC_BASE_URL || "https://api.miraiapi.com/v1";
+
+  // L'Anthropic SDK ajoute automatiquement "/v1/messages".
+  // Si ANTHROPIC_BASE_URL contient "/v1", il faut le retirer pour éviter "POST /v1/v1/messages" (404)
+  let rawBaseURL = process.env.ANTHROPIC_BASE_URL || "https://api.miraiapi.com";
+  const cleanBaseURL = rawBaseURL.replace(/\/v1\/?$/, "");
 
   return new Anthropic({
     apiKey,
-    baseURL,
+    baseURL: cleanBaseURL,
   });
 }
 
