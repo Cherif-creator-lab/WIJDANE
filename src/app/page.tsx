@@ -186,6 +186,7 @@ export default function HomePage() {
     { label: "Act IV · Theory", slideIdx: 14 },
     { label: "Act V · ISCC Model", slideIdx: 16 },
     { label: "Act VI · Action", slideIdx: 19 },
+    { label: "Closing", slideIdx: 21 },
   ];
 
   return (

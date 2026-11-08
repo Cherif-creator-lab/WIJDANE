@@ -1,0 +1,808 @@
+[
+  {
+    "id": "slide-1",
+    "slideNumber": 1,
+    "act": "MASTER’S THESIS DEFENSE · 2026",
+    "layout": "title",
+    "title": "Integrated Supply-Chain Coordination Framework",
+    "subtitle": "Synchronizing Production Planning, Procurement and Capacity Management under EDI Demand Variability",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "Mercedes-Benz VAN Program · Kromberg & Schubert, Kenitra (Plant K3)",
+      "Presented by: Wijdane Laaguidi · Salma Lsilis",
+      "Supervised by: Prof. Mohamed Mamad (academic) · Younes Benrkiya (internship)",
+      "Ibn Tofail University · Kromberg & Schubert"
+    ],
+    "secondaryColumn": [],
+    "bottomCallout": "Mercedes-Benz VAN Program · Kromberg & Schubert, Kenitra (Plant K3)",
+    "speaker": "Wijdane & Salma",
+    "speakerNotes": "Good morning. We are Wijdane Laaguidi and Salma Lsilis. Our research began inside the Logistics Department of Kromberg & Schubert in Kenitra, during the pre-series phase of the Mercedes-Benz VAN program. It starts with something we saw, not something we assumed.",
+    "durationMinutes": 1.0
+  },
+  {
+    "id": "slide-2",
+    "slideNumber": 2,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "cards",
+    "title": "We entered the supply chain from the inside: Procurement and Planning, side by side",
+    "subtitle": "",
+    "cards": [
+      {
+        "badge": "1",
+        "title": "K&S Group",
+        "description": "German company founded in 1902, headquartered in Abensberg; 50,000+ people, 40+ sites"
+      },
+      {
+        "badge": "2",
+        "title": "Kenitra, Morocco",
+        "description": "First plant K1 opened in 2015; Plant K3 runs the Mercedes-Benz VAN program"
+      },
+      {
+        "badge": "3",
+        "title": "Logistics Department",
+        "description": "Disposition (Procurement) · Planning · Material Flow · Incoming · Dispatch · Transport"
+      },
+      {
+        "badge": "4",
+        "title": "Our seats in the system",
+        "description": "Wijdane: Raw Material Procurement · Salma: Production Planning"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Research context: pre-series production at K3, with the transition to mass production expected about two weeks after the study window — a real industrial situation, not an abstract assumption.",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "Our internship was the starting point of the research. We were embedded in the Logistics Department at Plant K3 — Wijdane in Raw Material Procurement, Salma in Production Planning — so we saw the same demand flow from two sides. The study took place during pre-series, shortly before mass production.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-3",
+    "slideNumber": 3,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "cards",
+    "title": "From pre-series to mass production: the window to fix coordination before volumes rise",
+    "subtitle": "PRE-SERIES",
+    "cards": [
+      {
+        "badge": "PHASE 1",
+        "title": "PRE-SERIES",
+        "description": "Capacity and output still developing\nRequirements and technical modifications keep changing\nReadiness depends on supplier quality and deliveries"
+      },
+      {
+        "badge": "PHASE 2",
+        "title": "TRANSITION",
+        "description": "Mass production expected about two weeks after the study window\nCoordination routines must exist before volumes increase\nEscalation and MOCA practices still improvised"
+      },
+      {
+        "badge": "PHASE 3",
+        "title": "MASS PRODUCTION",
+        "description": "External cover (Macedonia, K2) phased out\nNo documented replacement capacity or contingency plan yet\nNeeds stable, shared coordination"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Pre-series is the opportunity to identify and correct coordination weaknesses before volumes increase",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "Pre-series is not a small version of mass production: capacity is still developing and requirements keep changing. The transition therefore matters — and it is also when the external cover from Macedonia and K2 is phased out. We make no claim on the plant’s production performance; this is the context.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-4",
+    "slideNumber": 4,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "flow",
+    "title": "EDI transmits the customer’s changes — but who acts on them?",
+    "subtitle": "CUSTOMER",
+    "cards": [
+      {
+        "badge": "CUSTOMER",
+        "title": "Mercedes-Benz EDI",
+        "description": "14-day contractual lead time. Call-offs and revisions: ↑ ↓ postponed · cancelled"
+      },
+      {
+        "badge": "INTERPRETATION",
+        "title": "Production Planning",
+        "description": "Receives and interprets the change — determines what must change, where, by when"
+      },
+      {
+        "badge": "CROSS-FUNCTIONAL",
+        "title": "Operational Decisions",
+        "description": "Procurement & purchase commitments · Material availability · Scheduling · Capacity · IE · Material Flow"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "1. Transmission (EDI solves this only)",
+      "2. Interpretation",
+      "3. Decision",
+      "4. Coordination",
+      "5. Execution & follow-up"
+    ],
+    "secondaryColumn": [],
+    "bottomCallout": "EDI transmits customer information — but receiving it does not automatically guarantee coordinated operational action",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "EDI is how Mercedes-Benz sends call-offs and revisions: quantities can go up, down, be postponed or cancelled. Planning receives them first, but each revision touches procurement, material availability, scheduling, capacity, engineering and material flow at once. EDI covers only the first step: transmission.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-5",
+    "slideNumber": 5,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "cards",
+    "title": "The first warning signs: the same demand change, felt differently across functions",
+    "subtitle": "Mercedes-Benz EDI",
+    "cards": [
+      {
+        "badge": "WARNING 1",
+        "title": "Type 1 vs Type 2/3 Orders",
+        "description": "Type 1 changes update automatically; Type 2/3 are re-entered manually, so information arrives late"
+      },
+      {
+        "badge": "WARNING 2",
+        "title": "Spreadsheet Coordination",
+        "description": "Coordination relies on emails and spreadsheets; a duplicated requirement file nearly triggered unwarranted purchases"
+      },
+      {
+        "badge": "WARNING 3",
+        "title": "Indirect Material Alert",
+        "description": "Material Flow often learns of an increase when the shop floor runs out of wires"
+      },
+      {
+        "badge": "WARNING 4 & 5",
+        "title": "Lateral Friction",
+        "description": "Quality blocked substitute wires until IE finalized the AVI document. Planning and IE disagree: uniform standard time vs harness-specific times"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "We saw it first; Act II tests whether it was systematic",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "These are observations and practitioner accounts, not yet conclusions. Type 1 changes update automatically, Type 2 and 3 are re-entered by hand; coordination ran on emails and spreadsheets; Material Flow often learned of increases only when the shop floor ran out of wire. Two lateral frictions also appeared. Did this happen once, or was it systematic?",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-6",
+    "slideNumber": 6,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "columns",
+    "title": "The gap: information arrives, but coordinated action does not follow automatically",
+    "subtitle": "INITIAL OBSERVATION",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "INITIAL OBSERVATION:",
+      "Changes reached functions at different times, and sometimes only after consequences were visible.",
+      "Impacted Functions: Procurement, Material Flow, Capacity, Industrial Engineering, Production."
+    ],
+    "secondaryColumn": [
+      "POTENTIAL OPERATIONAL CONSEQUENCES:",
+      "• Shortage on critical components",
+      "• Backlog accumulation on shop floor",
+      "• Capacity pressure and unplanned overtime",
+      "• Excess stock in warehouse",
+      "• Material obsolescence exposure"
+    ],
+    "bottomCallout": "A coordination gap, not a knowledge gap: the steps are known, but no owner, timeline or shared procedure exists",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "On the left, what we first noticed. On the right, what the investigation established: all four departments knew the escalation steps. So this is a coordination gap, not a knowledge gap. The centre diagram shows where the gap sits — between receiving the change and acting across functions.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-7",
+    "slideNumber": 7,
+    "act": "ACT I · THE INDUSTRIAL JOURNEY",
+    "layout": "cards",
+    "title": "Problem statement and research questions",
+    "subtitle": "",
+    "cards": [
+      {
+        "badge": "THE PROBLEM",
+        "title": "Interdependent Impact",
+        "description": "Each EDI revision hits several interdependent activities at once. Updates do not reach all functions simultaneously."
+      },
+      {
+        "badge": "RQ1",
+        "title": "Escalation Ladder",
+        "description": "How are demand increases handled?"
+      },
+      {
+        "badge": "RQ2",
+        "title": "MOCA / Obsolescence",
+        "description": "How are demand decreases handled?"
+      },
+      {
+        "badge": "RQ3",
+        "title": "Coordination",
+        "description": "How does information flow between functions?"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Risk: shortages, backlog, excess stock and obsolescence, sharpest in the move to mass production.",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "The problem is not demand variability alone, but how its consequences are communicated and managed across functions. Our main question asks how Procurement, Planning and Capacity Management can be better coordinated. The three supporting questions look at the escalation ladder, MOCA and obsolescence, and cross-functional coordination.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-8",
+    "slideNumber": 8,
+    "act": "ACT II · INVESTIGATING THE PROBLEM",
+    "layout": "flow",
+    "title": "From observation to a structured research project",
+    "subtitle": "OBSERVE",
+    "cards": [
+      {
+        "badge": "MAIN OBJECTIVE",
+        "title": "Cross-Functional Coordination",
+        "description": "Identify operational and organizational difficulties of EDI demand changes and propose an integrated approach to cross-functional coordination"
+      },
+      {
+        "badge": "SPECIFIC OBJECTIVES",
+        "title": "Mechanisms & Linkages",
+        "description": "Understand how increases and decreases affect decisions · identify coordination difficulties · connect demand information with materials, suppliers, schedules and capacity"
+      },
+      {
+        "badge": "CONTRIBUTION",
+        "title": "Academic & Practical",
+        "description": "Academic: a context-specific coordination framework for pre-series to mass production.\nPractical: a structured model for cross-functional decisions at K&S"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "OBSERVE → IDENTIFY → INVESTIGATE → ANALYSE → DEVELOP A MODEL",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "We moved from observing to a structured investigation. The aim was never only to describe demand variability; it was to understand its consequences and build a structured coordination approach. Academic contribution: a context-specific framework; practical contribution: the ISCC Model.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-9",
+    "slideNumber": 9,
+    "act": "ACT II · INVESTIGATING THE PROBLEM",
+    "layout": "cards",
+    "title": "Constructivism, mixed methods and an action-research logic",
+    "subtitle": "PARADIGM",
+    "cards": [
+      {
+        "badge": "PARADIGM",
+        "title": "Constructivism",
+        "description": "Meaning is built through practitioners’ interpretation: Planning and Procurement read the same EDI change differently"
+      },
+      {
+        "badge": "DESIGN",
+        "title": "Constructive Research Approach",
+        "description": "Embedded single-case study: K&S, Mercedes-Benz VAN program"
+      },
+      {
+        "badge": "APPROACH",
+        "title": "Mixed Methods",
+        "description": "Qualitative and quantitative evidence combined, not run in parallel"
+      },
+      {
+        "badge": "LOGIC",
+        "title": "Action-Research Logic",
+        "description": "Diagnose, build a provisional model, refine with practitioners; agreement is not proof of improvement"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "TRIANGULATION: Interviews + Observations + Company records (Excel, ERP/Krosy) — comparing sources to strengthen credibility",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "These are four different things and we keep them distinct. Constructivism is the epistemological paradigm. The design is a constructive research approach with an embedded single case. Mixed methods is how evidence is combined. Action-research logic is the diagnose, model, refine loop. Triangulation supports credibility. Practitioner agreement is not proof of improvement.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-10",
+    "slideNumber": 10,
+    "act": "ACT II · INVESTIGATING THE PROBLEM",
+    "layout": "columns",
+    "title": "Two evidence streams: ten voices and the company’s own records",
+    "subtitle": "QUALITATIVE",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "QUALITATIVE STREAM (10 Interviews):",
+      "• Purposive sample across all key functions",
+      "• Experience ranging from ~1.5 to 14 years",
+      "• Interview guide adapted to each function",
+      "• Field notes: daily replanning, procurement escalation meetings"
+    ],
+    "secondaryColumn": [
+      "QUANTITATIVE STREAM (Company Records):",
+      "• EDI call-off overviews: demand variability (Release CW28 vs CW29)",
+      "• Excel weekly plans & requirement lists: LAB vs VSAT",
+      "• ERP/Krosy reports: backlog and material coverage checks"
+    ],
+    "bottomCallout": "Qualitative + quantitative evidence → TRIANGULATION → a fuller understanding of the coordination problem",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "Qualitative: ten semi-structured interviews, chosen purposively across Planning, Procurement, Industrial Engineering, Material Flow and Production Management, plus field observation. Quantitative: existing operational records — EDI call-off overviews, Excel production plans and requirement lists, and ERP/Krosy reports. Combined, they triangulate.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-11",
+    "slideNumber": 11,
+    "act": "ACT III · THE REVELATION",
+    "layout": "cards",
+    "title": "What the professionals revealed: five recurring themes",
+    "subtitle": "Improvised escalation",
+    "cards": [
+      {
+        "badge": "THEME 1",
+        "title": "Improvised Escalation",
+        "description": "All four departments confirm the ladder exists, yet no owner or fixed timeline"
+      },
+      {
+        "badge": "THEME 2",
+        "title": "Uneven Information",
+        "description": "Type 2/3 changes re-entered by hand; emails and spreadsheets; Material Flow learns indirectly"
+      },
+      {
+        "badge": "THEME 3",
+        "title": "Supplier Rigidity",
+        "description": "Frozen weeks: 0% increase in weeks 0–2, then 20%; one single-source freeze ≈ 70% of shortage impact"
+      },
+      {
+        "badge": "THEMES 4 & 5",
+        "title": "Capacity & Friction",
+        "description": "Up to +20% absorbed; above it: overtime, weekends. Quality ↔ IE (AVI document) & Planning ↔ IE resolved informally"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "IN THEIR WORDS: \"improvised each time\" (Procurement) · \"logical, but improvised\" (Material Flow) · \"lack of information\" (Material Flow)",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "Organized by theme rather than department. Every department described escalation as improvised. Information moves unevenly by order type and channel. Suppliers enforce frozen weeks and one single-source freeze drove about 70% of shortage impact. Above a 20% increase, capacity needs extra measures. And frictions run laterally, not only Planning to Procurement.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-12",
+    "slideNumber": 12,
+    "act": "ACT III · THE REVELATION",
+    "layout": "metrics",
+    "title": "Measuring the problem: demand moves almost every week",
+    "subtitle": "",
+    "cards": [],
+    "metrics": [
+      {
+        "value": "54 / 59",
+        "label": "Weeks Changed (91.5%)",
+        "sublabel": "Between releases CW28 and CW29"
+      },
+      {
+        "value": "44.1%",
+        "label": "Average Weekly Variation",
+        "sublabel": "vs 20% internal flexibility window"
+      },
+      {
+        "value": "−505",
+        "label": "Largest Single-Week Drop",
+        "sublabel": "Units in CW34; fell to 0 in CW30–CW35"
+      },
+      {
+        "value": "85,913",
+        "label": "Units Unfulfilled in CW40",
+        "sublabel": "110,671 required vs 24,758 confirmed (22.4%)"
+      }
+    ],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "CW35 (9,723.3%) is a calculation artifact (86 LAB vs 8,362 VSAT units) and is excluded.",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "The problem is measurable, not only an impression. Between the CW28 and CW29 releases, 54 of 59 weeks changed, with average variation of 44.1% against a 20% internal flexibility window. Near-term call-offs fell to zero in CW30 to CW35. In CW40, 110,671 units were required against 24,758 confirmed. CW35 is a calculation artifact and is excluded.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-13",
+    "slideNumber": 13,
+    "act": "ACT III · THE REVELATION",
+    "layout": "table",
+    "title": "What the combined evidence confirmed",
+    "subtitle": "UNEXPECTED RESULTS",
+    "cards": [],
+    "metrics": [],
+    "table": {
+      "headers": [
+        "OBSERVATION",
+        "INTERVIEW EVIDENCE",
+        "QUANTITATIVE EVIDENCE",
+        "INTERPRETATION"
+      ],
+      "rows": [
+        [
+          "Demand keeps changing",
+          "Sudden changes are complex and non-standardized (Planning)",
+          "54 of 59 weeks changed; average variation 44.1% vs 20% window",
+          "Instability is chronic, not occasional"
+        ],
+        [
+          "Escalation is improvised",
+          "All four departments: no formal owner or timeline",
+          "Sister plant ~24 h, Planning ~1 day, IE 1–2 days, freight up to 2 weeks vs 14-day lead time",
+          "A coordination gap, not a knowledge gap"
+        ],
+        [
+          "Decreases create surplus",
+          "MOCA first, then scrap via CMT; one case split 75% / 25%",
+          "Call-offs fell to 0 in CW30–CW35 (−505 in CW34)",
+          "Obsolescence exposure when decreases follow commitments"
+        ],
+        [
+          "Plan differs from requirement",
+          "Planning negotiates weekend work and rebalancing",
+          "CW38 22.7%, CW39 0.0%, CW40 22.4% (85,913 units short)",
+          "Capacity pressure; the gap is not only planning inaccuracy"
+        ]
+      ]
+    },
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "UNEXPECTED RESULTS: Type 2/3 orders delay information · Written guidelines, yet universal improvisation · Difficulty depends on role · Pre-series cover is temporary · Friction beyond Planning–Procurement",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "Read each row left to right: what we observed, what practitioners said, what the records show, and our interpretation. The strength comes from the evidence, and we do not claim EDI variability alone causes every consequence. Beneath are the five results that surprised us.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-14",
+    "slideNumber": 14,
+    "act": "ACT III · THE REVELATION",
+    "layout": "columns",
+    "title": "Why the gap matters: increases and decreases hurt differently",
+    "subtitle": "DEMAND INCREASES",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "DEMAND INCREASES (↑):",
+      "• Escalation ladder: sister plant (~24 h) → Planning (~1 day) → IE (1–2 days) → special freight (up to 2 weeks)",
+      "• Suppliers: 0% increase in weeks 0–2, then +20%",
+      "• Above +20%: extra operators, workstations, overtime, weekends",
+      "• Pre-series cover from Macedonia and K2 is being phased out"
+    ],
+    "secondaryColumn": [
+      "DEMAND DECREASES (↓):",
+      "• MOCA first: redistribute surplus to sister plants",
+      "• Otherwise scrap, allocated via CMT: customer-driven vs internal over-ordering (one case: 75% / 25%)",
+      "• Suppliers allow 0% reduction in the earliest weeks",
+      "• MOCA is triggered only after the excess stock has arrived"
+    ],
+    "bottomCallout": "The response is cross-functional: Planning · Procurement · Industrial Engineering · Material Flow · Quality",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "The two directions create different problems, so the response cannot sit in Planning alone. Increases push on suppliers, capacity and emergency measures. Decreases expose existing purchase commitments and surplus stock. Procurement and Material Flow find decreases easier; Planning finds increases harder; IE finds both equally demanding.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-15",
+    "slideNumber": 15,
+    "act": "ACT IV · THEORY MEETS REALITY",
+    "layout": "cards",
+    "title": "Three lenses on the same problem",
+    "subtitle": "",
+    "cards": [
+      {
+        "badge": "1 · CONTINGENCY THEORY",
+        "title": "Lawrence & Lorsch (1967)",
+        "description": "No single best structure: coordination must fit the environment and its uncertainty. So: different responses to increases and decreases"
+      },
+      {
+        "badge": "2 · DYNAMIC CAPABILITIES",
+        "title": "Teece, Pisano & Shuen (1997)",
+        "description": "Sensing → Seizing → Transforming: detect change, act on it, renew routines. So: detect, decide and adapt, not just react"
+      },
+      {
+        "badge": "3 · SUPPLY CHAIN INTEGRATION",
+        "title": "Masudin & Kamara (2017); Tao et al. (2025)",
+        "description": "EDI is an enabler; value depends on turning information into coordinated action. So: align information, responsibilities and decisions"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Context: ramp-up and pre-series logistics require coordinated capacity, materials and information flows before series production",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "We used theory to interpret what we found, not to decorate. Contingency Theory explains why responses must fit the situation. Dynamic Capabilities explains how an organization senses, seizes and transforms. Supply Chain Integration explains why EDI is an enabler, not a solution. Ramp-up literature sets the context.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-16",
+    "slideNumber": 16,
+    "act": "ACT IV · THEORY MEETS REALITY",
+    "layout": "table",
+    "title": "From theory to the K&S case",
+    "subtitle": "Theory interprets the real problem; it does not replace the evidence",
+    "cards": [],
+    "metrics": [],
+    "table": {
+      "headers": [
+        "THEORETICAL CONCEPT",
+        "WHAT IT EXPLAINS",
+        "APPLICATION TO K&S"
+      ],
+      "rows": [
+        [
+          "Contingency Theory",
+          "Fit the coordination response to the conditions and uncertainty",
+          "Separate responses for increases and decreases; the 20% capacity threshold; role-dependent difficulty"
+        ],
+        [
+          "Dynamic Capabilities (sensing · seizing · transforming)",
+          "How an organization detects change, acts and renews its routines",
+          "Sense: Type 2/3 changes arrive late. Seize: escalation executed informally. Transform: give the ladder and MOCA owners and timelines"
+        ],
+        [
+          "Supply Chain Integration",
+          "EDI enables information exchange; integration needs aligned decisions",
+          "Common planning reference for Planning, Procurement, IE, Material Flow and Quality, not only Planning–Procurement"
+        ]
+      ]
+    },
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Theory interprets the real problem; it does not replace the evidence",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "Each theory answers a question the evidence raised. Contingency Theory: why treat increases and decreases differently. Dynamic Capabilities: where K&S senses late, seizes informally and has not yet transformed its routines. Supply Chain Integration: why fixing Planning to Procurement alone is not enough.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-17",
+    "slideNumber": 17,
+    "act": "ACT V · THE ISCC MODEL",
+    "layout": "cards",
+    "title": "Why we built the ISCC Model",
+    "subtitle": "Identified gap",
+    "cards": [
+      {
+        "badge": "INPUT 1 · IDENTIFIED GAP",
+        "title": "Coordination Gap",
+        "description": "Information received via EDI, but no coordinated cross-functional response follows automatically"
+      },
+      {
+        "badge": "INPUT 2 · EMPIRICAL FINDINGS",
+        "title": "Field Evidence",
+        "description": "Improvised execution · Type 2/3 delay · lateral friction · two directions of risk (shortage vs obsolescence)"
+      },
+      {
+        "badge": "INPUT 3 · THEORETICAL LENSES",
+        "title": "Academic Anchors",
+        "description": "Contingency Theory · Dynamic Capabilities · Supply Chain Integration"
+      },
+      {
+        "badge": "OUTPUT · ISCC MODEL",
+        "title": "Weaknesses Addressed",
+        "description": "1. No ownership of each step\n2. No defined response times\n3. Delayed, manual information\n4. No shared record of decisions"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "ISCC = Integrated Supply-Chain Coordination — closing the 4 structural weaknesses before mass production",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "The model is a response to the actual problem. Three inputs: the identified gap, the empirical findings and the theoretical foundations. It builds on the escalation ladder and MOCA rather than replacing them, and it treats increases and decreases within one coordination structure.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-18",
+    "slideNumber": 18,
+    "act": "ACT V · THE ISCC MODEL",
+    "layout": "cards",
+    "title": "The ISCC Model: from EDI information to coordinated decisions",
+    "subtitle": "Stage 1 – EDI Demand Variability",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "ISCC 5-STAGE FRAMEWORK:",
+      "• Stage 1 – EDI Demand Variability: Changes in customer demand and component requirements",
+      "• Stage 2 – Information & Coordination Requirements: Interpretation, communication, assessment and sharing",
+      "• Stage 3 – Cross-functional Operational Planning: Procurement · Production planning · Capacity management",
+      "• Stage 4A – Demand Increase: Material shortage, capacity pressure, backlog risk",
+      "• Stage 4B – Demand Decrease: Excess raw materials, inventory exposure, obsolescence risk",
+      "• Stage 5 – Integrated Supply-Chain Coordination: Coordinated decisions across functions"
+    ],
+    "secondaryColumn": [
+      "LINKS TO K&S PRACTICE:",
+      "• Stage 2: Automatic notification of Type 2/3 changes",
+      "• Stage 4A: Formalize the Escalation Ladder (owners & strict time limits)",
+      "• Stage 4B: Trigger MOCA and CMT review earlier at call-off drop",
+      "• Stage 5: Maintain a shared decision record across departments"
+    ],
+    "bottomCallout": "Builds on existing mechanisms; not yet implemented or validated.",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "This is the model as presented in the thesis: five stages. Stage 1, EDI demand variability. Stage 2, how changes are interpreted, communicated and assessed. Stage 3, Procurement, Planning and Capacity linked. Stage 4A, increase risks; 4B, decrease risks. Stage 5, coordinated decisions. It is a provisional, practitioner-informed model, not yet validated by implementation.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-19",
+    "slideNumber": 19,
+    "act": "ACT V · THE ISCC MODEL",
+    "layout": "table",
+    "title": "How the ISCC Model can prepare the move to mass production",
+    "subtitle": "IDENTIFIED CHALLENGE",
+    "cards": [],
+    "metrics": [],
+    "table": {
+      "headers": [
+        "IDENTIFIED CHALLENGE",
+        "PROPOSED ISCC APPROACH",
+        "EXPECTED BENEFIT (NOT YET MEASURED)"
+      ],
+      "rows": [
+        [
+          "Late, manual Type 2/3 information",
+          "Automatic notifications and shared updates",
+          "Earlier, simultaneous visibility"
+        ],
+        [
+          "Improvised escalation",
+          "Owners and time-boxed steps",
+          "Predictable response within the 14-day lead time"
+        ],
+        [
+          "Decreases handled after stock arrives",
+          "MOCA review triggered at the call-off drop",
+          "Lower obsolescence exposure"
+        ],
+        [
+          "External cover phased out, no contingency plan",
+          "Capacity implications assessed before decisions",
+          "Readiness for series volumes"
+        ],
+        [
+          "Lateral friction (Quality–IE, Planning–IE)",
+          "Shared procedure for disagreements",
+          "Fewer informal negotiations"
+        ]
+      ]
+    },
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Preparing Plant K3 for mass production readiness as external cover from Macedonia/K2 phases out",
+    "speaker": "Salma Lsilis",
+    "speakerNotes": "This slide separates what was found from what is expected. The left column is documented. The middle column is the proposed ISCC approach. The right column is expected benefit only: the thesis proposes the model and does not show measured improvements from implementation.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-20",
+    "slideNumber": 20,
+    "act": "ACT VI · FROM FINDINGS TO ACTION",
+    "layout": "table",
+    "title": "Recommendations and implementation priorities",
+    "subtitle": "Priority = relevance to the findings and feasibility: formalize existing mechanisms first",
+    "cards": [],
+    "metrics": [],
+    "table": {
+      "headers": [
+        "#",
+        "RECOMMENDATION",
+        "PROBLEM ADDRESSED",
+        "FUNCTIONS",
+        "EXPECTED BENEFIT"
+      ],
+      "rows": [
+        [
+          "1",
+          "Assign an owner and time limit to each escalation step; keep a common decision record",
+          "Improvised escalation",
+          "Planning, Procurement, IE, Material Flow",
+          "Predictable response inside the 14-day lead time"
+        ],
+        [
+          "2",
+          "Extend automatic notifications to Type 2/3 order changes",
+          "Late, manual information",
+          "Planning, Procurement, Material Flow",
+          "Earlier, simultaneous visibility"
+        ],
+        [
+          "3",
+          "Trigger the MOCA review at the call-off drop; keep Planning and IE involved in decreases",
+          "Late obsolescence response",
+          "Procurement, Planning, IE",
+          "Less excess stock and scrap"
+        ],
+        [
+          "4",
+          "Agree a shared procedure for cross-functional disagreements (AVI release, standard times)",
+          "Lateral friction",
+          "Quality, IE, Planning",
+          "Fewer informal negotiations"
+        ],
+        [
+          "5",
+          "Document contingency capacity for the end of Macedonia/K2 cover",
+          "Transition vulnerability",
+          "IE, Planning, Production",
+          "Readiness for series volumes"
+        ]
+      ]
+    },
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Priority = relevance to the findings and feasibility: formalize existing mechanisms first",
+    "speaker": "Wijdane Laaguidi",
+    "speakerNotes": "Recommendations follow the findings. Priority one formalizes what already exists, which is the most feasible. Priority two extends automatic notification. Rows three and five are our proposals derived from the findings; the priority order reflects relevance and feasibility.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-21",
+    "slideNumber": 21,
+    "act": "ACT VI · FROM FINDINGS TO ACTION",
+    "layout": "columns",
+    "title": "Limitations and conclusion",
+    "subtitle": "Single case",
+    "cards": [],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [
+      "LIMITATIONS:",
+      "• Single case: One plant (K3), one OEM program (Mercedes-Benz VAN)",
+      "• Interview depth: Several IE answers recorded as \"same as first\"",
+      "• Uneven coverage: Not every role answered every question",
+      "• Short window: ~2 weeks to mass production; model not observed after implementation"
+    ],
+    "secondaryColumn": [
+      "CONCLUSION:",
+      "1. Problem: EDI changes reach functions unevenly: a coordination gap",
+      "2. Evidence: Changes in 54 of 59 weeks; improvised escalation; lateral friction",
+      "3. Contribution: The ISCC Model, grounded in evidence and theory",
+      "4. Why now: Coordination must be structured before mass production"
+    ],
+    "bottomCallout": "A grounded, empirical contribution ready for implementation before series production ramp-up",
+    "speaker": "Wijdane & Salma",
+    "speakerNotes": "The limits are honest ones: a single case, uneven interview depth, uneven question coverage, and a short window with no post-implementation observation. Our conclusion: we observed a real coordination gap, measured and explained it, interpreted it theoretically, and proposed the ISCC Model to close it before mass production.",
+    "durationMinutes": 1.5
+  },
+  {
+    "id": "slide-22",
+    "slideNumber": 22,
+    "act": "CONCLUSION · QUESTIONS & DISCUSSION",
+    "layout": "closing",
+    "title": "Thank you for your attention",
+    "subtitle": "Questions and discussion",
+    "cards": [
+      {
+        "badge": "DEFENSE",
+        "title": "Master’s Thesis Defense · 2026",
+        "description": "Integrated Supply-Chain Coordination Framework\nMercedes-Benz VAN Program · Kromberg & Schubert Kenitra (Plant K3)"
+      },
+      {
+        "badge": "CANDIDATES",
+        "title": "Wijdane Laaguidi · Salma Lsilis",
+        "description": "Raw Material Procurement · Production Planning"
+      },
+      {
+        "badge": "SUPERVISORS",
+        "title": "Prof. Mohamed Mamad · Younes Benrkiya",
+        "description": "Ibn Tofail University · Kromberg & Schubert"
+      }
+    ],
+    "metrics": [],
+    "table": null,
+    "bulletPoints": [],
+    "secondaryColumn": [],
+    "bottomCallout": "Thank you for your attention · Questions and discussion · Ibn Tofail University · Kromberg & Schubert · 2026",
+    "speaker": "Wijdane & Salma",
+    "speakerNotes": "Thank you for your attention. We would be glad to discuss any part of the research: the evidence, the theory, or the ISCC Model.",
+    "durationMinutes": 1.5
+  }
+]
