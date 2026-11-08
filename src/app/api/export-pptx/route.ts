@@ -160,6 +160,71 @@ export async function POST(req: Request) {
           });
         }
 
+        // Slide 1 métadonnées spécifiques (Université, Entreprise, Candidats, Encadrants)
+        if (i === 1) {
+          const findBp = (regex: RegExp) =>
+            slide.bulletPoints?.find((bp) => regex.test(bp));
+
+          // 1. Université & Entreprise
+          const instLine = slide.bulletPoints?.find(
+            (bp) =>
+              /university|universit|tofail|ibn tofail/i.test(bp) ||
+              (/kromberg|schubert/i.test(bp) && !/van program|mercedes/i.test(bp))
+          );
+          let targetUniv = "";
+          let targetComp = "";
+
+          if (instLine) {
+            const parts = instLine.split(/[·–|]|\s+-\s+|\n/).map((p) => p.trim()).filter(Boolean);
+            if (parts.length >= 2) {
+              targetUniv = parts[0];
+              targetComp = parts[1];
+            } else {
+              if (/kromberg|schubert|k3/i.test(instLine) && !/univers/i.test(instLine)) {
+                targetComp = instLine;
+              } else {
+                targetUniv = instLine;
+              }
+            }
+          } else if (presentation.institution) {
+            const parts = presentation.institution.split(/[·–|]|\s+-\s+|\n/).map((p) => p.trim()).filter(Boolean);
+            if (parts.length >= 2) {
+              targetUniv = parts[0];
+              targetComp = parts[1];
+            } else {
+              targetUniv = presentation.institution;
+            }
+          }
+
+          if (targetUniv && targetUniv !== "Ibn Tofail University") {
+            slideXml = replaceInXml(slideXml, "Ibn Tofail University", targetUniv);
+          }
+          if (targetComp && targetComp !== "Kromberg & Schubert") {
+            slideXml = replaceInXml(slideXml, "Kromberg & Schubert", targetComp);
+          }
+
+          // 2. Candidats
+          const presLine = findBp(/presented by|wijdane|salma/i);
+          const targetCand = presLine
+            ? presLine.replace(/^presented by:?\s*/i, "").trim()
+            : presentation.candidates;
+          if (targetCand && targetCand !== "Wijdane Laaguidi · Salma Lsilis") {
+            slideXml = replaceInXml(slideXml, "Wijdane Laaguidi · Salma Lsilis", targetCand);
+          }
+
+          // 3. Encadrants
+          const supLine = findBp(/supervised by|mamad|benrkiya/i);
+          if (supLine) {
+            const acad = supLine.match(/prof[^·()]+(?:\([^()]+\))?/i)?.[0]?.trim();
+            const intern = supLine.match(/younes[^·()]+(?:\([^()]+\))?/i)?.[0]?.trim();
+            if (acad && acad !== "Prof. Mohamed Mamad (academic)") {
+              slideXml = replaceInXml(slideXml, "Prof. Mohamed Mamad (academic)", acad);
+            }
+            if (intern && intern !== "Younes Benrkiya (internship)") {
+              slideXml = replaceInXml(slideXml, "Younes Benrkiya (internship)", intern);
+            }
+          }
+        }
         zip.file(slideXmlPath, slideXml);
       }
     }

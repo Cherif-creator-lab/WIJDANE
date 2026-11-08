@@ -109,6 +109,54 @@ export function SlidePreview({
     return "grid-cols-1 sm:grid-cols-3";
   };
 
+  // Dynamic extraction for Slide 1 metadata
+  const findBullet = (patterns: RegExp[]) =>
+    slide.bulletPoints?.find((bp) => patterns.some((p) => p.test(bp)));
+
+  const presentedLine = findBullet([/presented by/i, /wijdane/i, /salma/i]);
+  const presentedText = presentedLine
+    ? presentedLine.replace(/^presented by:?\s*/i, "").trim()
+    : presentation.candidates;
+
+  const supervisedLine = findBullet([/supervised by/i, /mamad/i, /benrkiya/i]);
+  const supervisedAcademic = supervisedLine
+    ? supervisedLine.match(/prof[^·()]+(?:\([^()]+\))?/i)?.[0]?.trim() || "Prof. Mohamed Mamad (Academic)"
+    : "Prof. Mohamed Mamad (Academic)";
+  const supervisedIntern = supervisedLine
+    ? supervisedLine.match(/younes[^·()]+(?:\([^()]+\))?/i)?.[0]?.trim() || "Younes Benrkiya (Internship)"
+    : "Younes Benrkiya (Internship)";
+
+  // Institution matching (exclude program line)
+  const instLine = slide.bulletPoints?.find(
+    (bp) =>
+      /university|universit|tofail|ibn tofail/i.test(bp) ||
+      (/kromberg|schubert/i.test(bp) && !/van program|mercedes/i.test(bp))
+  );
+  let universityName = "Ibn Tofail University";
+  let companyName = "Kromberg & Schubert (K3)";
+
+  if (instLine) {
+    const parts = instLine.split(/[·–|]|\s+-\s+|\n/).map((p) => p.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      universityName = parts[0];
+      companyName = parts[1];
+    } else {
+      if (/kromberg|schubert|k3/i.test(instLine) && !/univers/i.test(instLine)) {
+        companyName = instLine;
+      } else {
+        universityName = instLine;
+      }
+    }
+  } else if (presentation.institution) {
+    const parts = presentation.institution.split(/[·–|]|\s+-\s+|\n/).map((p) => p.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      universityName = parts[0];
+      companyName = parts[1];
+    } else {
+      universityName = presentation.institution;
+    }
+  }
+
   return (
     <div className="w-full flex flex-col items-center">
       {/* TRUE 16:9 POWERPOINT SLIDE FRAME */}
@@ -152,7 +200,7 @@ export function SlidePreview({
                   Presented By
                 </p>
                 <p className="text-xs md:text-sm font-bold text-white truncate">
-                  {presentation.candidates}
+                  {presentedText}
                 </p>
                 <p className="text-[10px] text-slate-400 truncate">
                   Procurement & Production Planning
@@ -164,12 +212,10 @@ export function SlidePreview({
                   Supervised By
                 </p>
                 <p className="text-[11px] md:text-xs font-semibold text-white truncate">
-                  Prof. Mohamed Mamad{" "}
-                  <span className="text-slate-400 font-normal">(Academic)</span>
+                  {supervisedAcademic}
                 </p>
                 <p className="text-[11px] md:text-xs font-semibold text-white truncate mt-0.5">
-                  Younes Benrkiya{" "}
-                  <span className="text-slate-400 font-normal">(Internship)</span>
+                  {supervisedIntern}
                 </p>
               </div>
 
@@ -179,11 +225,11 @@ export function SlidePreview({
                 </p>
                 <div className="flex items-center gap-1.5 text-[11px] md:text-xs font-semibold text-white truncate">
                   <GraduationCap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span className="truncate">Ibn Tofail University</span>
+                  <span className="truncate">{universityName}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] md:text-xs font-semibold text-slate-200 truncate mt-0.5">
                   <Building2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                  <span className="truncate">Kromberg & Schubert (K3)</span>
+                  <span className="truncate">{companyName}</span>
                 </div>
               </div>
             </div>
