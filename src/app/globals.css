@@ -32,3 +32,51 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(245, 158, 11, 0.6);
 }
+
+/* ================= 16:9 PDF EXPORT PRINT STYLES ================= */
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  html, body {
+    background: #050811 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  header, aside, .no-print, button, nav, .storyboard-sidebar {
+    display: none !important;
+  }
+
+  #main-studio-workspace {
+    display: none !important;
+  }
+
+  #print-slides-deck {
+    display: block !important;
+  }
+
+  .print-slide-page {
+    width: 100vw !important;
+    height: 100vh !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    padding: 1.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    background: #050811 !important;
+  }
+
+  .print-slide-page > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
